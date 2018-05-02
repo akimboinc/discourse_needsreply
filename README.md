@@ -4,10 +4,10 @@ A Discourse theme component to add a custom menu item that queries for all posts
 About: https://meta.discourse.org/t/reply-reminder-remind-users-to-reply-to-new-users-topics-with-zero-replies/42644
 
 ## Contributors
-[cpradio](https://github.com/cpradio)
-[Rafael dos Santos Silva](https://github.com/xfalcox)
-[Simon Cossar](https://github.com/scossar)
-[Alex Peck](https://github.com/alxpck)
+[cpradio](https://github.com/cpradio)<br>
+[Rafael dos Santos Silva](https://github.com/xfalcox)<br>
+[Simon Cossar](https://github.com/scossar)<br>
+[Alex Peck](https://github.com/alxpck)<br>
 
 ## Copyright / License
 Copyright 2018 Do You Zoom, Inc.
