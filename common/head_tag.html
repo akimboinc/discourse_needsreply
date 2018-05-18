@@ -46,13 +46,17 @@
 
             if (!category) { // does not have a category
                 if (args.tagId) { // has a tag
-                    needsreplyHref = '/c/student-work' + search_query + '&tags=' + tag; // build the href with the tag.
+                    needsreplyHref = '/c/student-work' + search_query + '&tags=' + tag; // build the href with the tag HARDCODED
+                    // ALTERNATE APPROACH, hardcode latest for use with all categories
+                    // not as optimal for our needs with altMBA
+                    // needsreplyHref = '/latest/' + search_query + '&tags=' + tag; // build the href with the tag. variable
+
                 } else {
-                    return list; // return the list without creating the custom nav item because the query doesn't work on the base url of a Discourse install
+                    return list; // return the list without creating the custom nav item
                 }
             }
             else if (excludeList.indexOf(category.slug) != -1) { // the category is in the exclude list, do nothing
-                return list;
+                return list; // return the list without creating the custom nav item
             }
             else if (!category.parentCategory) { // is not a sub-category
                 needsreplyHref = tag ? '/c/' + category.slug + search_query + '&tags=' + tag : '/c/' + category.slug + search_query; // if there's a tag build the href with tags and the category, else fallback to the search query et al
