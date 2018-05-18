@@ -45,11 +45,7 @@
                 needsreplyHref;
 
             if (!category) { // does not have a category
-                if (args.tagId) { // has a tag
-                    needsreplyHref = '/latest/' + search_query + '&tags=' + tag; // build the href with the tag variable
-                } else { // has no tag
-                    return list; // return the list without creating the custom nav item
-                }
+                needsreplyHref = tag ? '/latest/' + search_query + '&tags=' + tag : '/latest/' + search_query; // if there's a tag build the href with the tag, else fall back to the latest view and the search query
             }
             else if (excludeList.indexOf(category.slug) != -1) { // the category is in the exclude list, do nothing
                 return list; // return the list without creating the custom nav item
