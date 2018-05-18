@@ -1,25 +1,33 @@
 <!-- POSTS THAT NEED LOVE -->
 <script type="text/discourse-plugin" version="0.8.18">
-   if (I18n.translations.en) {
-        I18n.translations.en.js.filters.needsreply = { title: "Posts That Need Love", help: "Topics that need more replies." };
+    if (I18n.translations.en) {
+        I18n.translations.en.js.filters.needsreply = {title: "Posts That Need Love", help: "Topics that have not be answered"};
     }
+
+    // CUSTOMIZE THESE VALUES
+    // Set the search query
+    let search_query = '?ascending=true&order=posts&max_posts=5';
+    // Exclude certain categories from showing needs_reply
+    let excludeList = ['process', 'resources', 'prompts', 'staff', 'unpublished-prompts'];
+
 
     // Add active class to Needs Reply button
     api.modifyClass('component:navigation-item', {
-        active: Ember.computed("contentFilterMode", "filterMode", function() {
+        active: Ember.computed("contentFilterMode", "filterMode", function () {
             let contentFilterMode = this.get('content').get('filterMode');
-            if (window.location.search === "?ascending=true&order=posts&max_posts=5") {
+            if (window.location.search && window.location.search.split('&')[0] === search_query.split('&')[0]) {
                 return contentFilterMode === "needsreply";
             } else {
                 return this._super(contentFilterMode, this.get('filterMode'));
             }
-       }),
+        }),
     });
 
-    // Remove max_posts filter
+    // Remove max_posts filter and tags filter
     api.modifyClass('controller:discovery/topics', {
         resetParams: function () {
             this.setProperties({max_posts: null});
+            this.setProperties({tags: null});
             this._super();
         }
     });
@@ -31,51 +39,28 @@
     });
 
     Discourse.NavItem.reopenClass({
-        buildList: function(category, args) {
-            let list = this._super(category, args);
+        buildList: function (category, args) {
+            let list = this._super(category, args),
+                tag = args.tagId,
+                needsreplyHref;
 
-            // Exclude certain categories from showing needs_reply
-            excludeList = ['process', 'resources', 'prompts', 'staff', 'unpublished-prompts'];
-
-            if(!category) {
-                // does not have a category
-                // if there's no tag, do nothing
-                if (!args.tagId) {}
-                //there is a tag, build the url with the tagId, but without the category
-                else {
-                  list.push(Discourse.ExternalNavItem.create({href: '/tags/' + args.tagId  + '?ascending=true&order=posts&max_posts=5', name: 'needsreply'}));
-                }
-
-            } else if (!category.parentCategory) {
-                // is not a sub-category
-                if (excludeList.indexOf(category.slug) != -1) {
-                  // in the exclude list, do nothing
+            if (!category) { // does not have a category
+                if (args.tagId) { // has a tag
+                    needsreplyHref = '/c/student-work' + search_query + '&tags=' + tag; // build the href with the tag.
                 } else {
-                    // if there's no tag, build url without tagId
-                    if (!args.tagId) {
-                      list.push(Discourse.ExternalNavItem.create({href: '/c/' + category.slug + '?ascending=true&order=posts&max_posts=5', name: 'needsreply'}));
-                    }
-                    //there is a tag, build the url with the tagId
-                    else {
-                      list.push(Discourse.ExternalNavItem.create({href: '/tags/c/' + category.slug + '/' + args.tagId + '?ascending=true&order=posts&max_posts=5', name: 'needsreply'}));
-                    }
-                }
-            } else {
-                // is a sub-category
-                if (excludeList.indexOf(category.slug) != -1) {
-                  // in the exclude list, do nothing
-                } else {
-                  // if there's no tag, build url without tagId
-                  if (!args.tagId) {
-                    list.push(Discourse.ExternalNavItem.create({href: '/c/' + category.parentCategory.slug + '/' + category.slug + '?ascending=true&order=posts&max_posts=5', name: 'needsreply'}));
-                  }
-                  //there is a tag, build the url with the tagId
-                  else {
-                    list.push(Discourse.ExternalNavItem.create({href: '/tags/c/' + category.parentCategory.slug + '/' + category.slug + '/' + args.tagId + '?ascending=true&order=posts&max_posts=5', name: 'needsreply'}));
-                  }
+                    return list; // return the list without creating the custom nav item because the query doesn't work on the base url of a Discourse install
                 }
             }
-
+            else if (excludeList.indexOf(category.slug) != -1) { // the category is in the exclude list, do nothing
+                return list;
+            }
+            else if (!category.parentCategory) { // is not a sub-category
+                needsreplyHref = tag ? '/c/' + category.slug + search_query + '&tags=' + tag : '/c/' + category.slug + search_query; // if there's a tag build the href with tags and the category, else fallback to the search query et al
+            } else { // is a sub-category
+                needsreplyHref = tag ? '/c/' + category.parentCategory.slug + '/' + category.slug + search_query + '&tags=' + tag :
+                    '/c/' + category.parentCategory.slug + '/' + category.slug + search_query; // if there's a tag build the href with tags, sub-cateogry, and category, else fallback to search query et al
+            }
+            list.push(Discourse.ExternalNavItem.create({href: needsreplyHref, name: 'needsreply'}));
             return list;
         }
     });
