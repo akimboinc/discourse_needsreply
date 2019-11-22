@@ -32,13 +32,13 @@
         }
     });
 
-    Discourse.ExternalNavItem = Discourse.NavItem.extend({
+    Discourse.ExternalNavItem = NavItem.extend({
         href: function () {
             return this.get('href');
         }.property("href")
     });
 
-    Discourse.NavItem.reopenClass({
+    NavItem.reopenClass({
         buildList: function (category, args) {
             let list = this._super(category, args),
                 tag = args.tagId,
