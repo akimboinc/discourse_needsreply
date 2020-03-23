@@ -1,14 +1,14 @@
 <!-- NEEDS REPLY -->
-<script type="text/discourse-plugin" version="0.8.18">
+<script type="text/discourse-plugin" version="2020.03.23">
     if (I18n.translations.en) {
         I18n.translations.en.js.filters.needsreply = {title: "Needs Reply", help: "Unanswered Topics"};
     }
 
     // CUSTOMIZE THESE VALUES
     // Set the search query
-    let search_query = '?ascending=true&order=posts&max_posts=1';
+    let search_query = '?ascending=false&max_posts=1';
     // Exclude certain categories from showing the needs reply menu item
-    let excludeList = ['pitches', 'weekly-recap', 'staff', 'launch-party-welcome'];
+    let excludeList = ['pitches', 'weekly-recap', 'staff'];
 
 
     // Add active class to Needs Reply button
