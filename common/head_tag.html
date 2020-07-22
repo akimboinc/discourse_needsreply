@@ -11,7 +11,7 @@
         displayName:"Needs Reply",
         title: "Needs Reply",
         customFilter: (category, args, router) => { return !category || !filtered_categories.includes(category.slug)}, // exclude categories
-        customHref: (category, args, router) => {  return search_query },
+        customHref: (category, args, router) => {  if (category) {return search_query} else {return "/latest" + search_query}  },
         init: (navItem, category) => { if (category) { navItem.set("category", category)  } },
         forceActive: (category, args, router) => {return router.currentURL.includes(search_query);}
     });
